@@ -1,0 +1,2 @@
+deep-translator==1.11.4
+discord.py==2.5.2
