@@ -57,6 +57,12 @@ def get_lang_list():
 
 supported_languages_list = get_lang_list()
 
+def length_check(text):
+    if len(text) <= 1500:
+        return True
+    else:
+        return False
+
 
 ### Command /languages
 @bot.tree.command(name='languages', description='List of supported languages')
@@ -71,26 +77,34 @@ async def languages(interaction: discord.Interaction):
                                text='The text to translate',
                                from_lang='Manual source language input')
 async def translate(interaction: discord.Interaction, destination: str, text: str, from_lang: str = None):
-    ### Translate text
-    if from_lang is None:  ### Detecting manual language input
-        translation = GoogleTranslator(target=destination).translate(text=text)
-    else:
-        translation = GoogleTranslator(source=from_lang, target=destination).translate(text=text)
+    if length_check(text): # Checking if the text is too long
+        ### Translate text
+        if from_lang is None:  ### Detecting manual language input
+            translation = GoogleTranslator(target=destination).translate(text=text)
+        else:
+            translation = GoogleTranslator(source=from_lang, target=destination).translate(text=text)
 
-    ### Constructing a message to send
-    await interaction.response.send_message(f"Translation: {translation}", ephemeral=True)
+        ### Constructing a message to send
+        await interaction.response.send_message(f"Translation: {translation}", ephemeral=True)
+    else:
+        await interaction.response.send_message("Text is too long, please try again\n"
+                                                "Limit 1500 symbols", ephemeral=True)
 
 
 ### Context menu button Translate
 @bot.tree.context_menu(name='Translate')
 async def translate_context(interaction: discord.Interaction, message: discord.Message):
-    dest_lang = await get_user_language(str(interaction.user.id))
-    if dest_lang:
-        translation = GoogleTranslator(target=f"{dest_lang}").translate(text=message.content)
-        await interaction.response.send_message(f"Translation:\n{translation}", ephemeral=True)
+    if length_check(message.content): # Checking if the text is too long
+        dest_lang = await get_user_language(str(interaction.user.id))
+        if dest_lang:
+            translation = GoogleTranslator(target=f"{dest_lang}").translate(text=message.content)
+            await interaction.response.send_message(f"Translation:\n{translation}", ephemeral=True)
+        else:
+            await interaction.response.send_message("You have not set a default language yet\n"
+                                                    "Please use /set_language command for it", ephemeral=True)
     else:
-        await interaction.response.send_message("You have not set a default language yet\n"
-                                                "Please use /set_language command for it", ephemeral=True)
+        await interaction.response.send_message("Text is too long, please try again\n"
+                                                "Limit 1500 symbols", ephemeral=True)
 
 
 ### Get default language for context menu button Translate from database
