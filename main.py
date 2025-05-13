@@ -1,30 +1,11 @@
-import discord, os, json
+import discord, os
 from discord.ext import commands
 from deep_translator import GoogleTranslator
+from bot_functions import (database_init, read_database, write_database, get_lang_text, get_lang_list, length_check,
+                           get_user_language)
 
 TOKEN = os.getenv("Discord_API")
 bot = commands.Bot(command_prefix='/', intents=discord.Intents.all())
-
-
-### Database initialization
-def database_init():
-    try:
-        with open("userdata.json"):
-            print("Database successfully loaded")
-    except FileNotFoundError:
-        with open("userdata.json", "w") as f:
-            json.dump([], f)
-
-
-### Database read and write
-async def read_database():
-    with open("userdata.json") as f:
-        return json.load(f)
-
-
-async def write_database(data):
-    with open("userdata.json", "w") as f:
-        json.dump(data, f)
 
 
 @bot.event
@@ -35,34 +16,6 @@ async def on_ready():
         print(f"Synced {len(synced)} commands")
     except Exception as e:
         print(e)
-
-
-### Supported languages as text
-def get_lang_text():
-    supported_languages = GoogleTranslator().get_supported_languages(as_dict=True)
-    lang_list = ""
-    for lang in supported_languages:
-        lang_list += f"{lang} - {supported_languages[lang]}\n"
-    return lang_list
-
-
-supported_languages_text = get_lang_text()
-
-
-### Supported languages as a list
-def get_lang_list():
-    supported_languages = GoogleTranslator().get_supported_languages(as_dict=True)
-    return [lang for lang in supported_languages.values()]
-
-
-supported_languages_list = get_lang_list()
-
-
-def length_check(text):
-    if len(text) <= 1500:
-        return True
-    else:
-        return False
 
 
 ### Command /languages
@@ -78,7 +31,7 @@ async def languages(interaction: discord.Interaction):
                                text='The text to translate',
                                from_lang='Manual source language input')
 async def translate(interaction: discord.Interaction, destination: str, text: str, from_lang: str = None):
-    if length_check(text):  # Checking if the text is too long
+    if await length_check(text):  # Checking if the text is too long
         ### Translate text
         if from_lang:  ### Detecting manual language input if is not None
             translation = GoogleTranslator(source=from_lang, target=destination).translate(text=text)
@@ -95,7 +48,7 @@ async def translate(interaction: discord.Interaction, destination: str, text: st
 ### Context menu button Translate
 @bot.tree.context_menu(name='Translate')
 async def translate_context(interaction: discord.Interaction, message: discord.Message):
-    if length_check(message.content):  # Checking if the text is too long
+    if await length_check(message.content):  # Checking if the text is too long
         user_language = await get_user_language(
             str(interaction.user.id))  # Getting user language from a database or None
         if user_language:
@@ -109,15 +62,7 @@ async def translate_context(interaction: discord.Interaction, message: discord.M
                                                 "Limit 1500 symbols", ephemeral=True)
 
 
-### Get default language for context menu button Translate from database
-async def get_user_language(interaction_user_id: str):
-    users_db = await read_database()
-    for user in users_db:
-        if interaction_user_id in user:
-            return user[interaction_user_id]
-    return None
-
-
+### Setting user language
 @bot.tree.command(name='set_language',
                   description='Sets your default language this will be used ONLY for Translate context menu button')
 @discord.app_commands.describe(destination='The language in "en/ja/ru" format, for more detail use /languages command')
@@ -143,6 +88,12 @@ async def set_language(interaction: discord.Interaction, destination: str):
                                                 "Try again", ephemeral=True)
 
 
-if __name__ == '__main__':
+def main():
     database_init()
     bot.run(TOKEN)
+
+
+if __name__ == '__main__':
+    supported_languages_text = get_lang_text()
+    supported_languages_list = get_lang_list()
+    main()
