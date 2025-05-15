@@ -1,5 +1,6 @@
 import discord, os
 from discord.ext import commands
+from discord import app_commands
 from deep_translator import GoogleTranslator
 from bot_functions import (database_init, read_database, write_database, get_lang_text, get_lang_list, length_check,
                            get_user_language)
@@ -20,6 +21,10 @@ async def on_ready() -> None:
 
 ### Command /languages
 @bot.tree.command(name='languages', description='List of supported languages')
+@app_commands.allowed_contexts(guilds=True,  # usable in servers
+                               dms=True,  # usable in 1-to-1 DMs <- dm_permission=True
+                               private_channels=True  # usable in group-DMs
+                               )
 async def languages(interaction: discord.Interaction) -> None:
     await interaction.response.send_message(f'Languages supported:\n{supported_languages_text}', ephemeral=True)
 
@@ -30,6 +35,10 @@ async def languages(interaction: discord.Interaction) -> None:
 @discord.app_commands.describe(destination='The language in "en/ja/ru" format',
                                text='The text to translate',
                                from_lang='Manual source language input')
+@app_commands.allowed_contexts(guilds=True,  # usable in servers
+                               dms=True,  # usable in 1-to-1 DMs <- dm_permission=True
+                               private_channels=True  # usable in group-DMs
+                               )
 async def translate(interaction: discord.Interaction, destination: str, text: str, from_lang: str = None) -> None:
     if await length_check(text):  # Checking if the text is too long
         ### Translate text
@@ -47,6 +56,10 @@ async def translate(interaction: discord.Interaction, destination: str, text: st
 
 ### Context menu button Translate
 @bot.tree.context_menu(name='Translate')
+@app_commands.allowed_contexts(guilds=True,  # usable in servers
+                               dms=True,  # usable in 1-to-1 DMs <- dm_permission=True
+                               private_channels=True  # usable in group-DMs
+                               )
 async def translate_context(interaction: discord.Interaction, message: discord.Message) -> None:
     if await length_check(message.content):  # Checking if the text is too long
         user_language = await get_user_language(
@@ -66,6 +79,10 @@ async def translate_context(interaction: discord.Interaction, message: discord.M
 @bot.tree.command(name='set_language',
                   description='Sets your default language this will be used ONLY for Translate context menu button')
 @discord.app_commands.describe(destination='The language in "en/ja/ru" format, for more detail use /languages command')
+@app_commands.allowed_contexts(guilds=True,  # usable in servers
+                               dms=True,  # usable in 1-to-1 DMs <- dm_permission=True
+                               private_channels=True  # usable in group-DMs
+                               )
 async def set_language(interaction: discord.Interaction, destination: str) -> None:
     if destination in supported_languages_list:
         user_id = str(interaction.user.id)  # converting user_id to string
