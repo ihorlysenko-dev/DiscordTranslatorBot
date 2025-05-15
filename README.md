@@ -1,5 +1,7 @@
 # 🌐 Discord Translate Bot
 
+🚀 **Demo Available:** You can test a live [demo](https://discord.com/oauth2/authorize?client_id=1370851504289873920) of this project
+
 A Discord bot that detects and translates messages into 133 supported languages using slash commands and context menu options. User language preferences are saved automatically — even after restarts. 
 
 Works everywhere except in DMs — you can even use it in other channels, and only you will see the translated messages!
@@ -24,6 +26,24 @@ To start the bot:
 ```python
 TOKEN = "YOUR_API_HERE"
 ```
+
+---
+
+## ➕ Adding Bot to Apps
+
+To make the bot available in your server:
+
+1. Go to the [Discord Developer Portal](https://discord.com/developers/applications)
+2. Select your application.
+3. Navigate to the **"Installation"** tab.
+4. Copy your **"Install Link"** and open it in your browser.
+
+![image](https://github.com/user-attachments/assets/6131bd7b-5776-409a-8de9-a00ed8e2597e)
+
+In the Discord popup, click **"Add to My Apps"**  
+![image](https://github.com/user-attachments/assets/4582cae6-5461-43ef-9ddf-1d72f852fbbf)
+
+Once added, the bot's commands will be available in chat commands.
 
 ---
 
