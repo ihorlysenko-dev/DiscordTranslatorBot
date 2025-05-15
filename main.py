@@ -9,7 +9,7 @@ bot = commands.Bot(command_prefix='/', intents=discord.Intents.all())
 
 
 @bot.event
-async def on_ready():
+async def on_ready() -> None:
     print(f'We have logged in as {bot.user}')
     try:
         synced = await bot.tree.sync()
@@ -20,7 +20,7 @@ async def on_ready():
 
 ### Command /languages
 @bot.tree.command(name='languages', description='List of supported languages')
-async def languages(interaction: discord.Interaction):
+async def languages(interaction: discord.Interaction) -> None:
     await interaction.response.send_message(f'Languages supported:\n{supported_languages_text}', ephemeral=True)
 
 
@@ -30,7 +30,7 @@ async def languages(interaction: discord.Interaction):
 @discord.app_commands.describe(destination='The language in "en/ja/ru" format',
                                text='The text to translate',
                                from_lang='Manual source language input')
-async def translate(interaction: discord.Interaction, destination: str, text: str, from_lang: str = None):
+async def translate(interaction: discord.Interaction, destination: str, text: str, from_lang: str = None) -> None:
     if await length_check(text):  # Checking if the text is too long
         ### Translate text
         if from_lang:  ### Detecting manual language input if is not None
@@ -47,7 +47,7 @@ async def translate(interaction: discord.Interaction, destination: str, text: st
 
 ### Context menu button Translate
 @bot.tree.context_menu(name='Translate')
-async def translate_context(interaction: discord.Interaction, message: discord.Message):
+async def translate_context(interaction: discord.Interaction, message: discord.Message) -> None:
     if await length_check(message.content):  # Checking if the text is too long
         user_language = await get_user_language(
             str(interaction.user.id))  # Getting user language from a database or None
@@ -66,7 +66,7 @@ async def translate_context(interaction: discord.Interaction, message: discord.M
 @bot.tree.command(name='set_language',
                   description='Sets your default language this will be used ONLY for Translate context menu button')
 @discord.app_commands.describe(destination='The language in "en/ja/ru" format, for more detail use /languages command')
-async def set_language(interaction: discord.Interaction, destination: str):
+async def set_language(interaction: discord.Interaction, destination: str) -> None:
     if destination in supported_languages_list:
         user_id = str(interaction.user.id)  # converting user_id to string
         users_db = await read_database()  # Reading DB
@@ -88,7 +88,7 @@ async def set_language(interaction: discord.Interaction, destination: str):
                                                 "Try again", ephemeral=True)
 
 
-def main():
+def main() -> None:
     database_init()
     bot.run(TOKEN)
 

@@ -3,7 +3,7 @@ from deep_translator import GoogleTranslator
 
 
 ### Database initialization
-def database_init():
+def database_init() -> None:
     try:
         with open("userdata.json"):
             print("Database successfully loaded")
@@ -13,19 +13,19 @@ def database_init():
 
 
 ### Database read
-async def read_database():
+async def read_database() -> list:
     with open("userdata.json") as f:
         return json.load(f)
 
 
 ### Database write
-async def write_database(data):
+async def write_database(data) -> None:
     with open("userdata.json", "w") as f:
         json.dump(data, f)
 
 
 ### Supported languages as text
-def get_lang_text():
+def get_lang_text() -> str:
     supported_languages = GoogleTranslator().get_supported_languages(as_dict=True)
     lang_list = ""
     for lang in supported_languages:
@@ -34,13 +34,13 @@ def get_lang_text():
 
 
 ### Supported languages as a list
-def get_lang_list():
+def get_lang_list() -> list:
     supported_languages = GoogleTranslator().get_supported_languages(as_dict=True)
     return [lang for lang in supported_languages.values()]
 
 
 ### Checking length of text
-async def length_check(text):
+async def length_check(text) -> bool:
     if len(text) <= 1500:
         return True
     else:
@@ -48,7 +48,7 @@ async def length_check(text):
 
 
 ### Get default language for context menu button Translate from database
-async def get_user_language(interaction_user_id: str):
+async def get_user_language(interaction_user_id: str) -> str | None:
     users_db = await read_database()
     for user in users_db:
         if interaction_user_id in user:
