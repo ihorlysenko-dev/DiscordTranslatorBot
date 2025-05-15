@@ -1,6 +1,8 @@
 # 🌐 Discord Translate Bot
 
-A Discord bot that detects and translates messages into 133 supported languages using slash commands and context menu options. User language preferences are saved automatically — even after restarts.
+A Discord bot that detects and translates messages into 133 supported languages using slash commands and context menu options. User language preferences are saved automatically — even after restarts. 
+
+Works everywhere except in DMs — you can even use it in other channels, and only you will see the translated messages!
 
 ---
 
