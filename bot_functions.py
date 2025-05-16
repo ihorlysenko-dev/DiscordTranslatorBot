@@ -1,5 +1,5 @@
 import json
-from deep_translator import GoogleTranslator
+from googletrans import LANGUAGES
 
 
 ### Database initialization
@@ -25,18 +25,20 @@ async def write_database(data) -> None:
 
 
 ### Supported languages as text
-def get_lang_text() -> str:
-    supported_languages = GoogleTranslator().get_supported_languages(as_dict=True)
-    lang_list = ""
-    for lang in supported_languages:
-        lang_list += f"{lang} - {supported_languages[lang]}\n"
-    return lang_list
+def get_lang_text() -> tuple[str, str]:
+    lang_list1 = ""
+    lang_list2 = ""
+    for lang in LANGUAGES.keys():
+        if len(lang_list1) < 1900:
+            lang_list1 += f"{LANGUAGES[lang].title()} - {lang}\n"
+        else:
+            lang_list2 += f"{LANGUAGES[lang].title()} - {lang}\n"
+    return lang_list1, lang_list2
 
 
 ### Supported languages as a list
 def get_lang_list() -> list:
-    supported_languages = GoogleTranslator().get_supported_languages(as_dict=True)
-    return [lang for lang in supported_languages.values()]
+    return [lang for lang in LANGUAGES.keys()]
 
 
 ### Checking length of text
