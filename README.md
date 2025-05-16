@@ -2,9 +2,9 @@
 
 🚀 **Demo Available:** You can test a live [demo](https://discord.com/oauth2/authorize?client_id=1370851504289873920) of this project
 
-A Discord bot that detects and translates messages into 133 supported languages using slash commands and context menu options. User language preferences are saved automatically — even after restarts. 
+A Discord bot that detects and translates messages into 245 supported languages using slash commands and context menu options. User language preferences are saved automatically — even after restarts. 
 
-Works anywhere — you can use it in all channels or DMs, and only you will see the translated messages!
+Works everywhere — you can even use it in other channels or in DMs, and only you will see the translated messages!
 
 ---
 
@@ -50,18 +50,18 @@ Once added, the bot's commands will be available in chat commands.
 ## 📦 Bot Commands
 
 ### `/languages`  
-Sends a list of 133 supported languages  
+Sends a list of 245 supported languages  
 ![languages](https://github.com/user-attachments/assets/a3b28214-8915-4e83-bff6-7a95a81d518c)
 
 ---
 
-### `/set_language`  
+### `/my`  
 Sets your chosen language as the default.  
 🛈 *Used for context menu translation*
 >Supported languages must be provided in ISO 639-1 format (e.g., `en`, `es`, `de`, `ru`, `ja`)
 
 ```bash
-/set_language <your language>
+/my <language>
 ```
 
 - User language preferences are stored in a `.json` file in the format:  
@@ -70,12 +70,12 @@ Sets your chosen language as the default.
   ```
 - Language settings persist after bot restarts — user data is not lost.
   
-![set_language](https://github.com/user-attachments/assets/70250853-e407-448c-986c-b8d1556d9d2e)
+![image](https://github.com/user-attachments/assets/ef66ce38-43d8-4e41-a41a-c46bec6b7341)
 
 #### 🖱️ How to Use via Context Menu:
 Right-click a message → **Apps** → **Translate**
 
-![context_1](https://github.com/user-attachments/assets/a138d8bc-f069-43ae-9162-a7d7549a5041)  
+![image](https://github.com/user-attachments/assets/0607d32e-a98b-4a60-842f-af9539685f56)
 ![context_2](https://github.com/user-attachments/assets/98940bc3-3a63-426a-b646-54985688a92d)
 
 ---
@@ -86,12 +86,21 @@ Translates text to the selected language.
 
 #### ➤ Auto-detect input language:
 ```bash
-/translate <target language> <your text>
+/translate <to_lang> <text>
 ```
 
 #### ➤ Manually specify source language (optional):
 ```bash
-/translate <target language> <your text> <source language>
+/translate <to_lang> <text> <from_lange>
 ```
 
-![translate](https://github.com/user-attachments/assets/8ef3b382-3efe-4b07-a3f9-cf54e8399685)
+![image](https://github.com/user-attachments/assets/6e1021a8-1f3d-44e2-81f9-bd664ae2ae40)
+
+---
+
+### Detect message language via context menu
+Right-click a message → **Apps** → **Detect language**
+![image](https://github.com/user-attachments/assets/cf05cb0d-6173-4bf5-8384-2010f056a616)
+![image](https://github.com/user-attachments/assets/a0260a73-8bb0-46d6-b0e6-2fbfa53cc3bc)
+
+
