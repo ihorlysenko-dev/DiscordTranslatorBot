@@ -100,6 +100,7 @@ Translates text to the selected language.
 
 ### Detect message language via context menu
 Right-click a message → **Apps** → **Detect language**
+
 ![image](https://github.com/user-attachments/assets/cf05cb0d-6173-4bf5-8384-2010f056a616)
 ![image](https://github.com/user-attachments/assets/a0260a73-8bb0-46d6-b0e6-2fbfa53cc3bc)
 
