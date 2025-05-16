@@ -49,6 +49,11 @@ Once added, the bot's commands will be available in chat commands.
 
 ## 📦 Bot Commands
 
+### `/help`  
+Info about functionality
+
+---
+
 ### `/languages`  
 Sends a list of 245 supported languages  
 ![languages](https://github.com/user-attachments/assets/a3b28214-8915-4e83-bff6-7a95a81d518c)

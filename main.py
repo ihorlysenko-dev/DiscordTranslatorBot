@@ -29,6 +29,7 @@ async def languages(interaction: discord.Interaction) -> None:
     await interaction.response.send_message(f'Languages supported:\n{supported_languages_text1}', ephemeral=True)
     await interaction.followup.send(f'{supported_languages_text2}', ephemeral=True)
 
+
 ### Command /translate
 @bot.tree.command(name='translate',
                   description='Autodetect language and translate to chosen language'
@@ -119,9 +120,27 @@ async def translate_context(interaction: discord.Interaction, message: discord.M
     async with Translator() as translator:
         result = await translator.detect(message.content)
         try:
-            await interaction.response.send_message(f"Detected language: {LANGUAGES[result.lang.lower()].title()} - {result.lang.lower()}", ephemeral=True)
+            await interaction.response.send_message(
+                f"Detected language: {LANGUAGES[result.lang.lower()].title()} - {result.lang.lower()}", ephemeral=True)
         except KeyError:
             await interaction.response.send_message(f"Detected language: {result.lang.lower()}", ephemeral=True)
+
+
+### Help command
+@bot.tree.command(name='help', description='Info about functionality')
+@app_commands.allowed_contexts(guilds=True,  # usable in servers
+                               dms=True,  # usable in 1-to-1 DMs <- dm_permission=True
+                               private_channels=True  # usable in group-DMs
+                               )
+async def help(interaction: discord.Interaction) -> None:
+    await interaction.response.send_message(f'Commands:\n'
+                                            f'/languages - List of supported languages\n\n'
+                                            f'/translate - Autodetect language and translate to chosen language\n'
+                                            f'(or you can manually input your language)\n\n'
+                                            f'/my - Sets your default language. Used for: Right click on message -> Apps -> Translate\n\n'
+                                            f'Detect message language: Right click on message -> Apps -> Detect language',
+                                            ephemeral=True,
+                                            )
 
 
 def main() -> None:
