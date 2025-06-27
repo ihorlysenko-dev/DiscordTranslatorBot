@@ -1,10 +1,13 @@
-import discord, os
+import discord, os, asyncio, sys
 from discord.ext import commands
 from discord import app_commands
 from googletrans import Translator, LANGUAGES
 from bot_functions import (database_init, get_lang_text, get_lang_list, length_check,
                            get_user_language, add_user_to_db, update_counter, set_user_language)
 from dotenv import load_dotenv
+
+if sys.platform.startswith("win"):
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 load_dotenv()
 DB_CONFIG = os.getenv("DB_CONFIG")
