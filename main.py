@@ -143,12 +143,13 @@ async def help(interaction: discord.Interaction) -> None:
                                             )
 
 
-def main() -> None:
-    database_init(DB_CONFIG)
-    bot.run(TOKEN)
+async def main() -> None:
+    await database_init(DB_CONFIG)
+    async with bot:
+        await bot.start(TOKEN)
 
 
 if __name__ == '__main__':
     supported_languages_text1, supported_languages_text2 = get_lang_text()
     supported_languages_list = get_lang_list()
-    main()
+    asyncio.run(main())
