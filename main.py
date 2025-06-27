@@ -2,10 +2,13 @@ import discord, os
 from discord.ext import commands
 from discord import app_commands
 from googletrans import Translator, LANGUAGES
-from bot_functions import (database_init, read_database, write_database, get_lang_text, get_lang_list, length_check,
-                           get_user_language)
+from bot_functions import (database_init, get_lang_text, get_lang_list, length_check,
+                           get_user_language, add_user_to_db, update_counter, set_user_language)
+from dotenv import load_dotenv
 
-TOKEN = os.getenv("Discord_API")
+load_dotenv()
+DB_CONFIG = os.getenv("DB_CONFIG")
+TOKEN = os.getenv("DISCORD_API")
 bot = commands.Bot(command_prefix='/', intents=discord.Intents.all())
 
 
@@ -66,15 +69,15 @@ async def translate(interaction: discord.Interaction, to_lang: str, text: str, f
                                )
 async def translate_context(interaction: discord.Interaction, message: discord.Message) -> None:
     if await length_check(message.content):  # Checking if the text is too long
-        user_language = await get_user_language(
-            str(interaction.user.id))  # Getting user language from a database or None
+        user_language = await get_user_language(DB_CONFIG, str(interaction.user.id))  # Getting user language from a database or None
         if user_language:
             async with Translator() as translator:
                 translation = await translator.translate(text=message.content, dest=user_language)
                 await interaction.response.send_message(f"Translation:\n{translation.text}", ephemeral=True)
+                await update_counter(DB_CONFIG, str(interaction.user.id))
         else:
             await interaction.response.send_message("You have not set a default language yet\n"
-                                                    "Please use /lang command for it", ephemeral=True)
+                                                    "Please use /my command for it", ephemeral=True)
     else:
         await interaction.response.send_message("Text is too long, please try again\n"
                                                 "Limit 1500 symbols", ephemeral=True)
@@ -91,17 +94,11 @@ async def translate_context(interaction: discord.Interaction, message: discord.M
 async def my(interaction: discord.Interaction, language: str) -> None:
     if language in supported_languages_list:
         user_id = str(interaction.user.id)  # converting user_id to string
-        users_db = await read_database()  # Reading DB
-        ### If the user is already in a database, update his language
-        for user in users_db:
-            if user_id in user:
-                user[user_id] = language
-                await write_database(users_db)
-                await interaction.response.send_message(f"Language set to {language}", ephemeral=True)
-                break
+        user_name = str(interaction.user.name)
+        if await set_user_language(DB_CONFIG, user_id, language):
+            await interaction.response.send_message(f"Language set to {language}", ephemeral=True)
         else:  # If the user is not in a database, add him
-            users_db.append({user_id: language})
-            await write_database(users_db)
+            await add_user_to_db(DB_CONFIG, user_id, user_name, language)
             await interaction.response.send_message(f"Language set to {language}", ephemeral=True)
 
     else:
@@ -144,7 +141,7 @@ async def help(interaction: discord.Interaction) -> None:
 
 
 def main() -> None:
-    database_init()
+    database_init(DB_CONFIG)
     bot.run(TOKEN)
 
 

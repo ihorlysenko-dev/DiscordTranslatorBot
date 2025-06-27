@@ -1,27 +1,20 @@
-import json
 from googletrans import LANGUAGES
+import psycopg
 
 
 ### Database initialization
-def database_init() -> None:
-    try:
-        with open("userdata.json"):
-            print("Database successfully loaded")
-    except FileNotFoundError:
-        with open("userdata.json", "w") as f:
-            json.dump([], f)
+def database_init(DB_CONFIG) -> None:
+    with psycopg.connect(DB_CONFIG) as conn:
+        with conn.cursor() as cur:
+            cur.execute("""CREATE TABLE IF NOT EXISTS userdata
+                       (   id           serial,
+                           user_id      TEXT PRIMARY KEY,
+                           name         TEXT,
+                           language     TEXT,
+                           translations integer DEFAULT 0
+                        )""")
 
-
-### Database read
-async def read_database() -> list:
-    with open("userdata.json") as f:
-        return json.load(f)
-
-
-### Database write
-async def write_database(data) -> None:
-    with open("userdata.json", "w") as f:
-        json.dump(data, f)
+            conn.commit()
 
 
 ### Supported languages as text
@@ -50,9 +43,39 @@ async def length_check(text) -> bool:
 
 
 ### Get default language for context menu button Translate from database
-async def get_user_language(interaction_user_id: str) -> str | None:
-    users_db = await read_database()
-    for user in users_db:
-        if interaction_user_id in user:
-            return user[interaction_user_id]
-    return None
+async def get_user_language(DB_CONFIG, user_id: str) -> str | None:
+    with psycopg.connect(DB_CONFIG) as conn:
+        with conn.cursor() as cur:
+            cur.execute("""SELECT language FROM userdata
+                           WHERE user_id = %s""", (user_id,))
+            user_language = cur.fetchone()
+            if user_language is None:
+                return None
+            else:
+                return user_language[0]
+
+async def set_user_language(DB_CONFIG, user_id: str, language: str) -> None:
+    with psycopg.connect(DB_CONFIG) as conn:
+        with conn.cursor() as cur:
+            cur.execute("""UPDATE userdata
+                           SET language = %s
+                           WHERE user_id = %s""", (language, user_id))
+            conn.commit()
+
+
+async def add_user_to_db(DB_CONFIG, user_id, user_name, language) -> None:
+    with psycopg.connect(DB_CONFIG) as conn:
+        with conn.cursor() as cur:
+            cur.execute("""INSERT INTO userdata (user_id, name, language)
+                           VALUES (%s, %s, %s)
+                           ON CONFLICT (user_id) DO UPDATE SET name = %s, language = %s""", (user_id, user_name, language, user_name, language))
+            conn.commit()
+
+
+async def update_counter(DB_CONFIG, user_id):
+    with psycopg.connect(DB_CONFIG) as conn:
+        with conn.cursor() as cur:
+            cur.execute("""UPDATE userdata
+                           SET translations = translations + 1
+                           WHERE user_id = %s""", (user_id,))
+            conn.commit()
