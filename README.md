@@ -69,10 +69,9 @@ Sets your chosen language as the default.
 /my <language>
 ```
 
-- User language preferences are stored in a `.json` file in the format:  
-  ```json
-  { "user_id": "language" }
-  ```
+- User language preferences are stored in the PostgreSQL database  
+
+
 - Language settings persist after bot restarts — user data is not lost.
   
 ![image](https://github.com/user-attachments/assets/ef66ce38-43d8-4e41-a41a-c46bec6b7341)
