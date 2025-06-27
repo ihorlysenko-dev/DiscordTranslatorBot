@@ -74,7 +74,7 @@ async def translate_context(interaction: discord.Interaction, message: discord.M
                 await interaction.response.send_message(f"Translation:\n{translation.text}", ephemeral=True)
         else:
             await interaction.response.send_message("You have not set a default language yet\n"
-                                                    "Please use /lang command for it", ephemeral=True)
+                                                    "Please use /my command for it", ephemeral=True)
     else:
         await interaction.response.send_message("Text is too long, please try again\n"
                                                 "Limit 1500 symbols", ephemeral=True)
