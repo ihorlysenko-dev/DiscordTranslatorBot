@@ -1,4 +1,4 @@
-import discord, os, asyncio, sys
+import discord, os, asyncio, sys, logging
 from discord.ext import commands
 from discord import app_commands
 from googletrans import Translator, LANGUAGES
@@ -10,6 +10,8 @@ if sys.platform.startswith("win"):
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 load_dotenv()
+logging.basicConfig(level=logging.INFO,
+                    format='[%(asctime)s] [%(levelname)s] %(name)s: %(message)s')
 DB_CONFIG = os.getenv("DB_CONFIG")
 TOKEN = os.getenv("DISCORD_API")
 bot = commands.Bot(command_prefix='/', intents=discord.Intents.all())
